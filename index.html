@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>New Game</title>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="styles.css" type="text/css">
+
+	</head>
+	<body>
+
+		<p id = 'message-output'></p>
+
+		<p id = 'action-output'></p>
+
+		<strong>Your exits are</strong>
+		<p id = 'exits-output'></p>
+
+		<strong>You can see the following items</strong>
+		<p id = 'visibleItems-output'></p>
+
+		<strong>Your rucksack contains the following</strong>
+		<p id = 'inventory-output'></p>
+
+		<form id = 'commandForm'>
+			<input type='text' id='command'><input type='submit' value='Do it' >
+		</form>
+
+		<p id = 'negativeFeedback-output'></p>
+
+		<script src="js/adventure.js"></script>
+	</body>
+</html>
