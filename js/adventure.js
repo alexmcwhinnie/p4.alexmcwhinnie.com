@@ -85,6 +85,7 @@ $( "#commandForm" ).submit(function(event) {
     convertRoomExits();
     showNarrative();
     getItem();
+    useItem();
     dropItem();
     showItem();
     
@@ -97,11 +98,12 @@ $( "#commandForm" ).submit(function(event) {
 4. Objects
 -----------------------*/
 // a) Define Objects
-// function Key () {
-//     this.textGet = "You pick up the key";
-//     this.textUse = "You use the key";
-//     this.textDrop = "You drop the key";
-// } 
+function Key () {
+    this.itemName = "key";
+    this.textGet = "You pick up the key";
+    this.textUse = "You use the key";
+    this.textDrop = "You drop the key";
+} 
 
 function Room (_roomNumber, _roomName, _roomDescription, _roomExits, _visibleItems) {
     this.roomNumber = _roomNumber;
@@ -111,14 +113,16 @@ function Room (_roomNumber, _roomName, _roomDescription, _roomExits, _visibleIte
     this.visibleItems = _visibleItems;
 } 
 
+var key = new Key();
+
 // b) Instantiate Objects (note: roomExits array [0]North, [1]East, [2]South, [3]West)
-var room1 = new Room(1, "foyer", "This is a desctiption of the foyer", _roomExits = [2, 0, 0, 0], _visibleItems = ["banana", "potato", "rock"]);
+var room1 = new Room(1, "foyer", "This is a desctiption of the foyer", _roomExits = [2, 0, 0, 0], _visibleItems = ["key", "potato", "rock"]);
 room[1] = room1;
 var room2 = new Room(2, "parlor", "This is a description of the parlor room", _roomExits = [0, 0, 1, 3], _visibleItems = ["lamp", "rug", "chair"]);
 room[2] = room2;
 var room3 = new Room(3, "phone room", "To your left you see an old phone and a calendar from 1957", _roomExits = [0, 2, 0, 0], _visibleItems = ["phone", "stool", "phone book"]);
 room[3] = room3;
-//var key1 = new Key();
+
 
 
 /*-----------------------
@@ -203,6 +207,18 @@ function getItem() {
     }
 }
 
+function useItem() {
+    if (commandVerb[0] == "use") {
+        for (var i = 0; i < inventory.length; i++) {
+            if (commandPostVerb == inventory[i]) {
+                // put output into #action-output
+
+                console.log("you have used the: " + inventory[i]);
+            }
+        }
+    }
+}
+
 function dropItem() {
     if (commandVerb[0] == "drop" || commandVerb[0] == "discard") {
         for (var i = 0; i < inventory.length; i++) {
@@ -232,7 +248,6 @@ function totalCommands() {
     // Compile all arrays into one for testing
     preTotal = visibleItems.concat(inventory);
     total = preTotal.concat(availableDirections);
-    //total = $.merge(preTotal,availableDirections);
     for (var i = 0; i < total.length; i++) {
         //console.log(total[i]);
     }
@@ -277,36 +292,36 @@ function negativeFeedback() {
             errorCode = 1;
         }
     }
-    // You're trying to use something you can see, but dont have in inventory   
+    // You're trying to use something you dont have   
     else if (commandVerb == "use") {
-        for (var i = 0; i < visibleItems.length; i++) {
-            if (commandPostVerb == visibleItems[i]) {
+        for (var i = 0; i < preTotal.length; i++) {
+            if (commandPostVerb != preTotal[i]) {
                 // You don't have the [item name]
-                feedbackMessage = "You don't have that item";
+                feedbackMessage = "I dont understand what you're trying to use";
                 console.log(feedbackMessage);
-                errorCode = 2;
+                errorCode = 3;
             }
         }
     }
-    // You're trying to use something you can see, but dont have in inventory
+    // You're trying to drop an item you dont have
     else if (commandVerb == "drop" || commandVerb == "discard") {
         for (var i = 0; i < inventory.length; i++) {
             if (commandPostVerb != inventory[i]) {
                 // You can't drop an item you don't have
                 feedbackMessage = "You can't drop an item you don't have";
                 console.log(feedbackMessage);
-                errorCode = 3;
+                errorCode = 4;
             }
         }
     }
-    // You're trying to use something you can see, but dont have in inventory
+    // You're trying to get something you already have
     else if (commandVerb == "get" || commandVerb == "take") {
         for (var i = 0; i < inventory.length; i++) {
             if (commandPostVerb == inventory[i]) {
                 // You already have that item
                 feedbackMessage = "You already have that item";
                 console.log(feedbackMessage);
-                errorCode = 4;
+                errorCode = 5;
             }
         }
     }
@@ -314,13 +329,13 @@ function negativeFeedback() {
     else if (command == "") {
         feedbackMessage = "You shouldn't waste time";
         console.log(feedbackMessage);
-        errorCode = 5;
+        errorCode = 6;
     }
     // That makes no sense (Anything else such as trying to GET or TAKE an item that doesnt exist or jibberish)
     else {
         feedbackMessage = "That makes no sense, pal";
         console.log(feedbackMessage);
-        errorCode = 6;
+        errorCode = 7;
     }
     // Output error code for testing
     console.log("Error Code: " + errorCode);
