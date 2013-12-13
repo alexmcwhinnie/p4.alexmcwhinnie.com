@@ -88,6 +88,7 @@ $( "#commandForm" ).submit(function(event) {
     useItem();
     dropItem();
     showItem();
+    //cleanCommas();
     
     
     event.preventDefault();
@@ -98,13 +99,6 @@ $( "#commandForm" ).submit(function(event) {
 4. Objects
 -----------------------*/
 // a) Define Objects
-function Key () {
-    this.itemName = "key";
-    this.textGet = "You pick up the key";
-    this.textUse = "You use the key";
-    this.textDrop = "You drop the key";
-} 
-
 function Room (_roomNumber, _roomName, _roomDescription, _roomExits, _visibleItems) {
     this.roomNumber = _roomNumber;
     this.roomName = _roomName;
@@ -113,7 +107,6 @@ function Room (_roomNumber, _roomName, _roomDescription, _roomExits, _visibleIte
     this.visibleItems = _visibleItems;
 } 
 
-var key = new Key();
 
 // b) Instantiate Objects (note: roomExits array [0]North, [1]East, [2]South, [3]West)
 var room1 = new Room(1, "foyer", "This is a desctiption of the foyer", _roomExits = [2, 0, 0, 0], _visibleItems = ["key", "potato", "rock"]);
@@ -211,9 +204,17 @@ function useItem() {
     if (commandVerb[0] == "use") {
         for (var i = 0; i < inventory.length; i++) {
             if (commandPostVerb == inventory[i]) {
-                // put output into #action-output
+                // Update action message
+                actionMessage = "You use the " + inventory[i];
+                $('#action-output').html(actionMessage);
+                // Reset feedback message
+                feedbackMessage = "";
+                $('#negativeFeedback-output').html(feedbackMessage);
 
-                console.log("you have used the: " + inventory[i]);
+
+                // HUGE AMOUNT OF IF STATEMENTS!
+
+
             }
         }
     }
@@ -249,7 +250,6 @@ function totalCommands() {
     preTotal = visibleItems.concat(inventory);
     total = preTotal.concat(availableDirections);
     for (var i = 0; i < total.length; i++) {
-        //console.log(total[i]);
     }
 }
 
@@ -305,13 +305,16 @@ function negativeFeedback() {
     }
     // You're trying to drop an item you dont have
     else if (commandVerb == "drop" || commandVerb == "discard") {
+        var legalDrop = false;
         for (var i = 0; i < inventory.length; i++) {
-            if (commandPostVerb != inventory[i]) {
-                // You can't drop an item you don't have
-                feedbackMessage = "You can't drop an item you don't have";
-                console.log(feedbackMessage);
-                errorCode = 4;
+            if (commandPostVerb == inventory[i]) {
+                legalDrop = true;
             }
+        } if (legalDrop == false) {
+            // You can't drop an item you don't have
+            feedbackMessage = "You can't drop an item you don't have";
+            console.log(feedbackMessage);
+            errorCode = 4;
         }
     }
     // You're trying to get something you already have
@@ -343,7 +346,12 @@ function negativeFeedback() {
 }
 
 function showNarrative() {
-    $('#message-output').html("You are currently standing in the " + room[currentRoom].roomName + ". " + room[currentRoom].roomDescription);
+    $('#room-output').html("You are currently standing in the " + room[currentRoom].roomName);
+    $('#message-output').html(room[currentRoom].roomDescription);
     $('#action-output').html(actionMessage);
+}
+
+function cleanCommas() {
+    
 }
 
