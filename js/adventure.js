@@ -42,6 +42,7 @@ var command;
 var commandVerb;
 var commandPostVerb;
 var actionMessage;
+var feedbackMessage;
 var currentRoom = 1;
 
 // b) Arrays
@@ -50,24 +51,25 @@ var inventory = new Array();
 var visibleItems = new Array();
 var roomObjects = new Array();
 var roomExits = new Array();
-var roomDirections = new Array("north", "south", "east", "west");
+var roomDirections = new Array("north", "east", "south", "west");
 var availableDirections = new Array();
 var preTotal = new Array();
 var total = new Array();
 
-inventory[0] = ["watch"];
+inventory[0] = "watch";
 
 
 /*-----------------------
 2. Onload functions
 -----------------------*/
 $( document ).ready(function() {
-    commandHandling();
-    roomMover();
-    getItem();
-    dropItem();
+    //commandHandling();
+    //roomMover();
+    showItem();
+    showNarrative();
+    // getItem();
+    // dropItem();
     convertRoomExits();
-    output();
 });
 
 
@@ -77,12 +79,16 @@ $( document ).ready(function() {
 $( "#commandForm" ).submit(function(event) {
     // Run functions
     commandHandling();
+    totalCommands();
     roomMover();
+    negativeFeedback();    
+    convertRoomExits();
+    showNarrative();
     getItem();
     dropItem();
-    convertRoomExits();
-    negativeFeedback();
-    output();
+    showItem();
+    
+    
     event.preventDefault();
 });
 
@@ -137,7 +143,7 @@ function roomMover() {
                 actionMessage = "You move " + commandPostVerb;
                 $('#action-output').html(actionMessage);
             } else {
-                $('#negativeFeedback-output').html("You can't move there");
+                //$('#negativeFeedback-output').html("You can't move there");
             }
         } else if (commandPostVerb == "east") {
             if (room[currentRoom].roomExits[1] != 0) {
@@ -145,7 +151,7 @@ function roomMover() {
                 actionMessage = "You move " + commandPostVerb;
                 $('#action-output').html(actionMessage);
             } else {
-                $('#negativeFeedback-output').html("You can't move there");
+                //$('#negativeFeedback-output').html("You can't move there");
             }
         } else if (commandPostVerb == "south") {
             if (room[currentRoom].roomExits[2] != 0) {
@@ -153,7 +159,7 @@ function roomMover() {
                 actionMessage = "You move " + commandPostVerb;
                 $('#action-output').html(actionMessage);
             } else {
-                $('#negativeFeedback-output').html("You can't move there");
+                //$('#negativeFeedback-output').html("You can't move there");
             }
         } else if (commandPostVerb == "west") {
             if (room[currentRoom].roomExits[3] != 0) {
@@ -161,10 +167,16 @@ function roomMover() {
                 actionMessage = "You move " + commandPostVerb;
                 $('#action-output').html(actionMessage);
             } else {
-                $('#negativeFeedback-output').html("You can't move there");
+                //$('#negativeFeedback-output').html("You can't move there");
             }
         }
     }
+}
+
+function showItem() {
+    visibleItems = room[currentRoom].visibleItems;
+    $('#visibleItems-output').html(visibleItems.join(', '));
+    $('#inventory-output').html(inventory.join(', '));
 }
 
 function getItem() {
@@ -186,7 +198,7 @@ function getItem() {
 
                 // Remove the added item from the visible item array
                 visibleItems[i] = '';
-            }
+            } 
         }
     }
 }
@@ -204,39 +216,119 @@ function dropItem() {
 }   
 
 function convertRoomExits() {
-    for (var i = 0; i < room[currentRoom].roomExits.length; i++){
+    // clear array
+    availableDirections.length = 0;
+
+    for (var i = 0; i < room[currentRoom].roomExits.length; i++) {
         if (room[currentRoom].roomExits[i] > 0) {
             roomDirections[i];
-            availableDirections = roomDirections[i];
-            $('#exits-output').html(roomDirections[i]);
+            availableDirections[i] = roomDirections[i];
+            $('#exits-output').html(availableDirections.join(', '));
         }
     }
 }
 
 function totalCommands() {
     // Compile all arrays into one for testing
-    preTotal = $.merge(visibleItems,inventory);
-    total = $.merge(preTotal,roomDirections);
-}
-
-function negativeFeedback() {
-    if (commandPostVerb != total) {
-        $('#negativeFeedback-output').html("You cant do that");
+    preTotal = visibleItems.concat(inventory);
+    total = preTotal.concat(availableDirections);
+    //total = $.merge(preTotal,availableDirections);
+    for (var i = 0; i < total.length; i++) {
+        //console.log(total[i]);
     }
 }
 
-function output() {
+function negativeFeedback() {
+    var errorCode = 0;
+    //VALID OPTION (clear negative feedback)
+    ////////////////////////////////////////
+
+    // Check for valid commandVerb
+    if (commandVerb == "get" || commandVerb == "take" || commandVerb == "move" || commandVerb == "go" || commandVerb == "use" || commandVerb == "drop" || commandVerb == "discard") {
+        for (var i = 0; i < total.length; i++) {
+            // Check for valid commandPostVerb from all possible options (total = inventory, directions, visible items)
+            if (commandPostVerb == total[i]) {
+                // Valid action! Clear error
+                feedbackMessage = "";
+                console.log(feedbackMessage);
+                errorCode = 0;
+            }
+        }
+    }
+
+    //INVALID TESTS (personalised negative feedback)
+    ////////////////////////////////////////
+
+    // You're trying to go in an invalid direction
+    if (commandVerb == "move" || commandVerb == "go") {
+        // Direction flag
+        var legalMove = false;
+        for (var i = 0; i < availableDirections.length; i++) {
+            console.log("commandPostVerb == " + commandPostVerb + " availableDirections[i] == " + availableDirections[i]);
+            if (commandPostVerb == availableDirections[i]) {
+                legalMove = true;
+                
+                console.log(feedbackMessage);
+            }
+        } 
+        if (legalMove == false) {
+            // You cant go in that direction
+            feedbackMessage = "You cant go in that direction";
+            errorCode = 1;
+        }
+    }
+    // You're trying to use something you can see, but dont have in inventory   
+    else if (commandVerb == "use") {
+        for (var i = 0; i < visibleItems.length; i++) {
+            if (commandPostVerb == visibleItems[i]) {
+                // You don't have the [item name]
+                feedbackMessage = "You don't have that item";
+                console.log(feedbackMessage);
+                errorCode = 2;
+            }
+        }
+    }
+    // You're trying to use something you can see, but dont have in inventory
+    else if (commandVerb == "drop" || commandVerb == "discard") {
+        for (var i = 0; i < inventory.length; i++) {
+            if (commandPostVerb != inventory[i]) {
+                // You can't drop an item you don't have
+                feedbackMessage = "You can't drop an item you don't have";
+                console.log(feedbackMessage);
+                errorCode = 3;
+            }
+        }
+    }
+    // You're trying to use something you can see, but dont have in inventory
+    else if (commandVerb == "get" || commandVerb == "take") {
+        for (var i = 0; i < inventory.length; i++) {
+            if (commandPostVerb == inventory[i]) {
+                // You already have that item
+                feedbackMessage = "You already have that item";
+                console.log(feedbackMessage);
+                errorCode = 4;
+            }
+        }
+    }
+    // You haven't entered anything
+    else if (command == "") {
+        feedbackMessage = "You shouldn't waste time";
+        console.log(feedbackMessage);
+        errorCode = 5;
+    }
+    // That makes no sense (Anything else such as trying to GET or TAKE an item that doesnt exist or jibberish)
+    else {
+        feedbackMessage = "That makes no sense, pal";
+        console.log(feedbackMessage);
+        errorCode = 6;
+    }
+    // Output error code for testing
+    console.log("Error Code: " + errorCode);
+    $('#negativeFeedback-output').html(feedbackMessage);
+}
+
+function showNarrative() {
     $('#message-output').html("You are currently standing in the " + room[currentRoom].roomName + ". " + room[currentRoom].roomDescription);
     $('#action-output').html(actionMessage);
-    $('#visibleItems-output').html(visibleItems.join(', '));
-    $('#inventory-output').html(inventory.join(', '));
-
-    // Output to console for testing
-    // console.log("room number: " + room[currentRoom].roomNumber);
-    // console.log("room name: " + room[currentRoom].roomName);
-    // console.log("room description: " + room[currentRoom].roomDescription);
-    // console.log("room exits: " + room[currentRoom].roomExits);
-    // console.log("visibleItems: " + visibleItems);
-    // console.log("availableDirections: " + availableDirections);
 }
 
