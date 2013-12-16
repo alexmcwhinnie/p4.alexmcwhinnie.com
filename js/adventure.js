@@ -57,6 +57,8 @@ var availableDirections = new Array();
 var preTotal = new Array();
 var total = new Array();
 
+var inventoryFull = false;
+
 inventory[0] = "watch";
 inventory[1] = "potato";
 
@@ -79,7 +81,7 @@ $( "#commandForm" ).submit(function(event) {
     // Run functions
     commandHandling();
     totalCommands();
-    roomMover();
+    roomMover();    
     negativeFeedback();    
     convertRoomExits();
     showNarrative();
@@ -88,7 +90,8 @@ $( "#commandForm" ).submit(function(event) {
     dropItem();
     checkVisibleItems();
     showItem();
-    
+    //checkInventorySize();
+
     
     
     event.preventDefault();
@@ -182,12 +185,22 @@ function showItem() {
     $('#inventory-output').html(inventory.join(', '));       
 }
 
+function checkInventorySize() {
+    if (inventory.length >= 3) {
+        inventoryFull = true;
+    } else {
+        inventoryFull = false;
+    }
+}
+
+
 function getItem() {
+    // Check inventory size
+    checkInventorySize();
     // Show the visible items within each instantiated room object
     visibleItems = room[currentRoom].visibleItems;
-
     // Only do this stuff if command is preceded by GET
-    if (commandVerb[0] == "get" || commandVerb[0] == "take") {
+    if ((commandVerb[0] == "get" || commandVerb[0] == "take") && inventoryFull == false) {
         // Check the visible items array by looping through it
         for (var i = 0; i < visibleItems.length; i++) {
             // Make sure our command matches a visible item
@@ -197,12 +210,16 @@ function getItem() {
                 inventory.push(visibleItems[i]);
 
                 // Set a message to assist with narrative
-                actionMessage = "You take the " + visibleItems[i] +". ";
+                actionMessage = "You take the " + visibleItems[i] + ". ";
+                $('#action-output').html(actionMessage);
 
                 // Remove the added item from the visible item array
                 visibleItems.splice(i, 1);
             } 
         }
+    } else if ((commandVerb[0] == "get" || commandVerb[0] == "take") && inventoryFull == true) {
+        feedbackMessage = "Try as you might, you can't find enough pockets to hold all this loot";
+        $('#negativeFeedback-output').html(feedbackMessage);
     }
 }
 
@@ -227,18 +244,29 @@ function useItem() {
 }
 
 function dropItem() {
+    
     if (commandVerb[0] == "drop" || commandVerb[0] == "discard") {
         for (var i = 0; i < inventory.length; i++) {
             if (commandPostVerb == inventory[i]) {
+                // Update action message
+                actionMessage = "You drop the " + inventory[i];
+                $('#action-output').html(actionMessage);
+                // Push item from inventory to room's visible items array
                 room[currentRoom].visibleItems.push(inventory[i]);
+                // Remove the dropped item from inventory
                 inventory.splice(i, 1);
+                // Reset feedback message
+                feedbackMessage = "";
+                $('#negativeFeedback-output').html(feedbackMessage);
+                // Check for new inventory size
+                checkInventorySize();
             }
         }
     }
 }   
 
 function convertRoomExits() {
-    // clear array
+    // Begin by clearing array
     availableDirections.length = 0;
     // Loop through exits availble to current room object
     for (var i = 0; i < room[currentRoom].roomExits.length; i++) {
@@ -248,7 +276,7 @@ function convertRoomExits() {
             availableDirections.push(roomDirections[i]);
         }
     }
-    // Output it
+    // Output available directions
     $('#exits-output').html(availableDirections.join(', '));
 }
 
@@ -276,7 +304,6 @@ function negativeFeedback() {
     //INVALID TESTS (personalised negative feedback)
     // You're trying to go in an invalid direction
     if (commandVerb == "move" || commandVerb == "go") {
-        // Direction flag
         var legalMove = false;
         for (var i = 0; i < availableDirections.length; i++) {
             if (commandPostVerb == availableDirections[i]) {
@@ -284,7 +311,6 @@ function negativeFeedback() {
             }
         } 
         if (legalMove == false) {
-            // You cant go in that direction
             feedbackMessage = "You cant go in that direction";
         }
     }
@@ -292,7 +318,6 @@ function negativeFeedback() {
     else if (commandVerb == "use") {
         for (var i = 0; i < preTotal.length; i++) {
             if (commandPostVerb != preTotal[i]) {
-                // You don't have the [item name]
                 feedbackMessage = "I dont understand what you're trying to use";
             }
         }
@@ -305,7 +330,6 @@ function negativeFeedback() {
                 legalDrop = true;
             }
         } if (legalDrop == false) {
-            // You can't drop an item you don't have
             feedbackMessage = "You can't drop an item you don't have";
         }
     }
@@ -313,7 +337,6 @@ function negativeFeedback() {
     else if (commandVerb == "get" || commandVerb == "take") {
         for (var i = 0; i < inventory.length; i++) {
             if (commandPostVerb == inventory[i]) {
-                // You already have that item
                 feedbackMessage = "You already have that item";
             }
         }
@@ -326,7 +349,26 @@ function negativeFeedback() {
     else {
         feedbackMessage = "That makes no sense, pal";
     }
-    // Output error code for testing
+    // BONUS! Give error if item is visible, but trying to be used as if in inventory
+    if (commandVerb == "use") {
+        for (var i = 0; i < visibleItems.length; i++) {
+            if (commandPostVerb == visibleItems[i]) {
+                feedbackMessage = "You can't use an item you dont have";
+            }
+        }
+    }
+
+    if (commandVerb == "get" || commandVerb == "take") {
+        for (var i = 0; i < visibleItems.length; i++) {
+            if (commandPostVerb != visibleItems[i]) {
+                feedbackMessage = "You can't see a " + commandPostVerb;
+            }
+        }
+    }
+
+    
+
+    // Output feedback message
     $('#negativeFeedback-output').html(feedbackMessage);
 }
 
