@@ -56,11 +56,15 @@ var roomDirections = new Array("north", "east", "south", "west");
 var availableDirections = new Array();
 var preTotal = new Array();
 var total = new Array();
+var roomLocked = new Array();
 
 var inventoryFull = false;
 
+
 inventory[0] = "watch";
 inventory[1] = "potato";
+
+roomLocked[3] = true;
 
 
 /*-----------------------
@@ -102,22 +106,25 @@ $( "#commandForm" ).submit(function(event) {
 4. Objects
 -----------------------*/
 // a) Define Objects
-function Room (_roomNumber, _roomName, _roomDescription, _roomExits, _visibleItems) {
+function Room (_roomNumber, _roomName, _roomDescription, _roomExits, _visibleItems, _doorLocked) {
     this.roomNumber = _roomNumber;
     this.roomName = _roomName;
     this.roomDescription = _roomDescription;
     this.roomExits = _roomExits;
     this.visibleItems = _visibleItems;
+    this.doorLocked = _doorLocked;
 } 
 
 
 // b) Instantiate Objects (note: roomExits array [0]North, [1]East, [2]South, [3]West)
-var room1 = new Room(1, "foyer", "This is a desctiption of the foyer", _roomExits = [2, 0, 0, 0], _visibleItems = ["key", "potato", "rock"]);
+var room1 = new Room(1, "foyer", "This is a desctiption of the foyer", _roomExits = [2, 0, 0, 0], _visibleItems = ["key", "potato", "rock"], _doorLocked = [false, false, false, false]);
 room[1] = room1;
-var room2 = new Room(2, "parlor", "This is a description of the parlor room", _roomExits = [0, 0, 1, 3], _visibleItems = ["lamp", "rug", "chair"]);
+var room2 = new Room(2, "parlor", "This is a description of the parlor room", _roomExits = [0, 4, 1, 3], _visibleItems = ["lamp", "rug", "chair"], _doorLocked = [false, true, false, false]);
 room[2] = room2;
-var room3 = new Room(3, "phone room", "To your left you see an old phone and a calendar from 1957", _roomExits = [0, 2, 0, 0], _visibleItems = ["phone", "stool", "phone book"]);
+var room3 = new Room(3, "phone room", "To your left you see an old phone and a calendar from 1957", _roomExits = [0, 2, 0, 0], _visibleItems = ["phone", "stool", "phone book"], _doorLocked = [false, false, false, false]);
 room[3] = room3;
+var room4 = new Room(4, "bathroom", "This is a bathroom", _roomExits = [0, 0, 0, 2], _visibleItems = ["toilet paper"], _doorLocked = [false, false, false, false]);
+room[4] = room4;
 
 
 
@@ -139,27 +146,51 @@ function roomMover() {
     if (commandVerb == "move" || commandVerb == "go") {
         if (commandPostVerb == "north") {
             if (room[currentRoom].roomExits[0] != 0) {
-                currentRoom = room[currentRoom].roomExits[0];
-                actionMessage = "You move " + commandPostVerb;
-                $('#action-output').html(actionMessage);
+                
+                if (room[currentRoom].doorLocked[0] == false) {
+                    currentRoom = room[currentRoom].roomExits[0];
+                    actionMessage = "You move " + commandPostVerb;
+                    $('#action-output').html(actionMessage);
+                } else {
+                    actionMessage = "The door appears to be locked";
+                    $('#action-output').html(actionMessage);
+                }
             } 
         } else if (commandPostVerb == "east") {
             if (room[currentRoom].roomExits[1] != 0) {
-                currentRoom = room[currentRoom].roomExits[1];
-                actionMessage = "You move " + commandPostVerb;
-                $('#action-output').html(actionMessage);
+
+                if (room[currentRoom].doorLocked[1] == false) {
+                    currentRoom = room[currentRoom].roomExits[1];
+                    actionMessage = "You move " + commandPostVerb;
+                    $('#action-output').html(actionMessage);
+                } else {
+                    actionMessage = "The door appears to be locked";
+                    $('#action-output').html(actionMessage);
+                }
             } 
         } else if (commandPostVerb == "south") {
             if (room[currentRoom].roomExits[2] != 0) {
-                currentRoom = room[currentRoom].roomExits[2];
-                actionMessage = "You move " + commandPostVerb;
-                $('#action-output').html(actionMessage);
+                
+                if (room[currentRoom].doorLocked[2] == false) {
+                    currentRoom = room[currentRoom].roomExits[2];
+                    actionMessage = "You move " + commandPostVerb;
+                    $('#action-output').html(actionMessage);
+                } else {
+                    actionMessage = "The door appears to be locked";
+                    $('#action-output').html(actionMessage);
+                }
             } 
         } else if (commandPostVerb == "west") {
             if (room[currentRoom].roomExits[3] != 0) {
-                currentRoom = room[currentRoom].roomExits[3];
-                actionMessage = "You move " + commandPostVerb;
-                $('#action-output').html(actionMessage);
+                
+                if (room[currentRoom].doorLocked[3] == false) {
+                    currentRoom = room[currentRoom].roomExits[3];
+                    actionMessage = "You move " + commandPostVerb;
+                    $('#action-output').html(actionMessage);
+                } else {
+                    actionMessage = "The door appears to be locked";
+                    $('#action-output').html(actionMessage);
+                }
             } 
         }
     }
