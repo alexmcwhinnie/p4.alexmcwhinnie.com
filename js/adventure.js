@@ -193,7 +193,6 @@ function checkInventorySize() {
     }
 }
 
-
 function getItem() {
     // Check inventory size
     checkInventorySize();
@@ -357,17 +356,7 @@ function negativeFeedback() {
             }
         }
     }
-
-    if (commandVerb == "get" || commandVerb == "take") {
-        for (var i = 0; i < visibleItems.length; i++) {
-            if (commandPostVerb != visibleItems[i]) {
-                feedbackMessage = "You can't see a " + commandPostVerb;
-            }
-        }
-    }
-
     
-
     // Output feedback message
     $('#negativeFeedback-output').html(feedbackMessage);
 }
