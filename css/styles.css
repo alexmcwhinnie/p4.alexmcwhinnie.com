@@ -16,7 +16,7 @@ header {
 
 #wrapper {
 	margin: auto;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	padding: 20px;
 	width: 800px;
 	background-color: #F0EDED;
@@ -26,14 +26,14 @@ header {
 #leftColumn {
 	padding-top: 10px;
 	float: left;
-	width: 205px;
+	width: 150px;
 	border-radius: 10px;
 }
 
 #rightColumn {
 	padding-top: 10px;
-	margin-left: 265px;
-	width: 205px;
+	margin-left: 180px;
+	width: 150px;
 	border-radius: 10px;
 }
 
@@ -45,13 +45,17 @@ header {
 	width:50px;
 }
 
+#data-output {
+	color: #ff0000;
+}
+
 input {
-	width: 200px;
+	width: 150px;
 }
 
 h1 {
-	width: 234px;
-	height: 144px;
+	width: 300px;
+	height: 249px;
 	text-indent: 100%;
 	white-space: nowrap;
 	overflow: hidden;
@@ -65,7 +69,7 @@ h2 {
 }
 
 h3 {
-	margin: 20px 0px 10px 0px;
+	margin: 10px 0px 10px 0px;
 }
 
 nav {
@@ -125,6 +129,6 @@ a:hover {
 
 footer {
 	text-align: center;
-	margin: 30px 0px 0px 0px;
+	margin: 10px 0px 0px 0px;
 	font-size: 0.8em;
 }

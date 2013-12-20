@@ -3,14 +3,12 @@ class users_controller extends base_controller {
 
     public function __construct() {
         parent::__construct();
-        //echo "users_controller construct called<br><br>";
     } 
 
     public function signup($error = NULL) {
     # Setup view
         $this->template->content = View::instance('v_users_signup');
         $this->template->title   = "Sign Up";
-        //$this->template->content->error   = $error;
 
     # Render template
         echo $this->template;    
@@ -33,7 +31,7 @@ class users_controller extends base_controller {
 
         # Setup view
         $this->template->content = View::instance('v_users_signedup');
-        $this->template->title   = "Welcome";
+        $this->template->title   = "Thanks for signing up";
         echo $this->template;
     }
 
@@ -41,13 +39,11 @@ class users_controller extends base_controller {
 
         # Set up the view
         $this->template->content = View::instance("v_users_login");
-
+        $this->template->title   = "Please Log In";
         # Pass data to the view
         $this->template->content->error = $error;
-
         # Render the view
         echo $this->template;
-
     }
 
 
@@ -112,23 +108,18 @@ class users_controller extends base_controller {
         # If they weren't redirected away, continue:
         # Setup view
         $this->template->content = View::instance('v_users_profile');
-        $this->template->title   = "Profile of ".$this->user->first_name;
+        $this->template->title   = "Profile of ".$this->user->username; 
         
-
-        # The following deals with retrieving all of a user's posts
-        # Placing it in the users controller was a tough design choice. 
-        
-        # Build the query to get all the users posts
+        # Build the query to get all the users deets
         $q = "SELECT *
-            FROM posts
+            FROM users
             WHERE user_id = ".$this->user->user_id;
 
-        # Execute the query to get all the posts. 
         # Store the result array in the variable $posts
-        $posts = DB::instance(DB_NAME)->select_rows($q);
+        $user_details = DB::instance(DB_NAME)->select_rows($q);
 
         # Pass it to the view
-        $this->template->content->posts       = $posts;
+        $this->template->content->users       = $user_details;
 
         # Render template
         echo $this->template;

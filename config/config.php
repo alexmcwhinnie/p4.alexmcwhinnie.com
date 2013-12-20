@@ -14,7 +14,7 @@ If you want a different default time format for this app, set it below
 */
 
 # What is the name of this app?
-	define('APP_NAME', 'Wingaling');  
+	define('APP_NAME', 'The Manor');  
 
 # When email is sent out from the server, where should it come from?
 # Ideally, this should match the domain name
@@ -31,7 +31,7 @@ A email designated to receive messages from the server. Examples:
 	define('SYSTEM_EMAIL', 'alexmcwhinnie@gmail.com'); 
 
 # Default DB name for this app
-	define('DB_NAME', "alexmcwh_p2_alexmcwhinnie_com"); 
+	define('DB_NAME', "alexmcwh_p4_alexmcwhinnie_com"); 
 
 # Timezone
 	define('TIMEZONE', 'America/New_York');

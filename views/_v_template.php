@@ -3,8 +3,10 @@
 <head>
 	<title><?php if(isset($title)) echo $title; ?></title>
 
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
-	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+	<meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="/css/styles.css" type="text/css">
 				
 	<!-- Controller Specific JS/CSS -->
 	<?php if(isset($client_files_head)) echo $client_files_head; ?>
@@ -21,10 +23,10 @@
 
                     <!-- Menu for users who are logged in -->
                     <?php if($user): ?>
-                        <li><a href='/posts'>View Posts</a></li>
-                        <li><a href='/posts/add'>Add a Post</a></li>
-                        <li><a href='/posts/users'>Following</a></li>
-                        <li><a href='/users/profile'>Profile</a></li>
+                        <li><a href='/users/profile'>Account</a></li>
+                        <li><a href='#' id='save'>Save Game</a></li>
+                        <li><a href='#' id='load'>Load Game</a></li>
+                        <li><a href='#' id='new'>New Game</a></li>
                         <li><a href='/users/logout'>Logout</a></li>
 
                     <!-- Menu options for users who are not logged in -->

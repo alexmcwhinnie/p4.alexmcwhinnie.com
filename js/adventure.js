@@ -1,26 +1,9 @@
 /*-----------------------
-MAP
-           |4|
- _______ __| |__
-| phone | parlr |
-| room3   room2 |
-|_______|___ ___|
-        | Foyer |
-        | room1 |
-        |_______|
------------------------*/
-
-// TO DO LIST
-// * Write function to remove commas from arrays
-// * Make items in arrays OBJECTS that contain lots of use strings
-// * Write USE item function
-
-
-/*-----------------------
 INDEX
 1.  Variables
     a) Variables
     b) Arrays
+    c) Booleans
 
 2.  Onload Listener
 
@@ -41,8 +24,11 @@ INDEX
 var command;
 var commandVerb;
 var commandPostVerb;
+var moveMessage;
 var actionMessage;
 var feedbackMessage;
+var additionalMessage;
+var dataMessage;
 var currentRoom = 1;
 
 // b) Arrays
@@ -58,13 +44,12 @@ var preTotal = new Array();
 var total = new Array();
 var roomLocked = new Array();
 
+// c) Booleans
 var inventoryFull = false;
 
 
 inventory[0] = "watch";
 inventory[1] = "potato";
-
-roomLocked[3] = true;
 
 
 /*-----------------------
@@ -84,6 +69,7 @@ $( document ).ready(function() {
 $( "#commandForm" ).submit(function(event) {
     // Run functions
     commandHandling();
+    clearOutputs();
     totalCommands();
     roomMover();    
     negativeFeedback();    
@@ -94,13 +80,31 @@ $( "#commandForm" ).submit(function(event) {
     dropItem();
     checkVisibleItems();
     showItem();
-    //checkInventorySize();
-
-    
-    
     event.preventDefault();
 });
 
+
+$( "#save" ).click(function() {
+    saveSession();
+    dataMessage = "Game Saved";
+    $('#data-output').html(dataMessage);
+});
+
+$( "#load" ).click(function() {
+    loadSession();
+    dataMessage = "Game Loaded";
+    $('#data-output').html(dataMessage);
+});
+
+$( "#new" ).click(function() {
+    // Reset game to factory defaults
+    location.reload(true);
+    // Save game state
+    newSession();
+    // Output status
+    dataMessage = "New Game";
+    $('#data-output').html(dataMessage);
+});
 
 /*-----------------------
 4. Objects
@@ -131,6 +135,75 @@ room[4] = room4;
 /*-----------------------
 5. Functions
 -----------------------*/
+function saveSession() {
+
+    // Convert inventory array to string in prep for sending to DB
+    var inventoryString = inventory.toString();
+
+    $.ajax({
+        type: "POST",
+        url: "game/p_save",
+        data: {currentRoom: currentRoom, inventory: inventoryString, lockBathroom: room[2].doorLocked[1]},
+        complete: function(data){
+                //data contains the response from the php file.
+                //u can pass it here to the javascript function
+        }
+    });
+}
+
+function processLoad(data) { 
+    var loadData = jQuery.parseJSON( data.responseText );
+
+    // print old room
+    console.log("old: " + currentRoom);
+    // Get Current Room
+    currentRoom = loadData[0].room_number;
+    // print new room
+    console.log("new: " + currentRoom);
+    // print session id that is being sent from sql/php
+    console.log("game session id: " + loadData[0].game_session_id);
+    
+    // Get Inventory
+    var inventoryString = loadData[0].inventory;
+    
+    // Update inventory
+    inventory = inventoryString.split(',');
+    room[2].doorLocked[1] = loadData[0].lock_bathroom;
+    showNarrative();
+}
+
+function loadSession() {
+    $.ajax({
+        type: "POST",
+        url: "game/load",
+        data: {},
+        complete: function(data){
+                //data contains the response from the php file.
+                //u can pass it here to the javascript function
+                
+                //console.log(data);
+                processLoad(data);
+        }
+    }); 
+}
+
+function newSession() {
+
+    // Convert inventory array to string in prep for sending to DB
+    var inventoryString = inventory.toString();
+
+    $.ajax({
+        type: "POST",
+        url: "game/p_save",
+        data: {currentRoom: currentRoom, inventory: inventoryString, lockBathroom: room[2].doorLocked[1]},
+        complete: function(data){
+                //data contains the response from the php file.
+                //u can pass it here to the javascript function
+        }
+    });
+    //showNarrative();
+}
+
 function commandHandling() {
     // When the form is submitted, grab the value of the input text and set it to variable 'command'
     command = $('#command').val();
@@ -149,11 +222,11 @@ function roomMover() {
                 
                 if (room[currentRoom].doorLocked[0] == false) {
                     currentRoom = room[currentRoom].roomExits[0];
-                    actionMessage = "You move " + commandPostVerb;
-                    $('#action-output').html(actionMessage);
+                    moveMessage = "You move " + commandPostVerb;
+                    $('#move-output').html(moveMessage);
                 } else {
-                    actionMessage = "The door appears to be locked";
-                    $('#action-output').html(actionMessage);
+                    moveMessage = "The door appears to be locked";
+                    
                 }
             } 
         } else if (commandPostVerb == "east") {
@@ -161,11 +234,11 @@ function roomMover() {
 
                 if (room[currentRoom].doorLocked[1] == false) {
                     currentRoom = room[currentRoom].roomExits[1];
-                    actionMessage = "You move " + commandPostVerb;
-                    $('#action-output').html(actionMessage);
+                    moveMessage = "You move " + commandPostVerb;
+                    $('#move-output').html(moveMessage);
                 } else {
-                    actionMessage = "The door appears to be locked";
-                    $('#action-output').html(actionMessage);
+                    moveMessage = "The door appears to be locked";
+                    $('#move-output').html(moveMessage);
                 }
             } 
         } else if (commandPostVerb == "south") {
@@ -173,11 +246,11 @@ function roomMover() {
                 
                 if (room[currentRoom].doorLocked[2] == false) {
                     currentRoom = room[currentRoom].roomExits[2];
-                    actionMessage = "You move " + commandPostVerb;
-                    $('#action-output').html(actionMessage);
+                    moveMessage = "You move " + commandPostVerb;
+                    $('#move-output').html(moveMessage);
                 } else {
-                    actionMessage = "The door appears to be locked";
-                    $('#action-output').html(actionMessage);
+                    moveMessage = "The door appears to be locked";
+                    $('#move-output').html(moveMessage);
                 }
             } 
         } else if (commandPostVerb == "west") {
@@ -185,11 +258,11 @@ function roomMover() {
                 
                 if (room[currentRoom].doorLocked[3] == false) {
                     currentRoom = room[currentRoom].roomExits[3];
-                    actionMessage = "You move " + commandPostVerb;
-                    $('#action-output').html(actionMessage);
+                    moveMessage = "You move " + commandPostVerb;
+                    $('#move-output').html(moveMessage);
                 } else {
-                    actionMessage = "The door appears to be locked";
-                    $('#action-output').html(actionMessage);
+                    moveMessage = "The door appears to be locked";
+                    $('#move-output').html(moveMessage);
                 }
             } 
         }
@@ -268,13 +341,30 @@ function useItem() {
                 // HUGE AMOUNT OF IF STATEMENTS!
                 console.log("You have used the " + inventory[i]);
 
+                // Use Bathroom Key
+                if (inventory[i] == "key" && currentRoom == 2) {
+                    console.log("current room 2 and key used");
+
+                    // Update Object
+                    room[currentRoom].doorLocked[1] = false;
+
+                    // Boolean for DB
+                    lockBathroom = false;
+
+                    // Set action message
+                    actionMessage = "You use the " + inventory[i];
+
+                    // Set additional message
+                    additionalMessage = "The door swings open and you peer into what looks like a bathroom";
+                    $('#additional-output').html(additionalMessage);
+                }
             }
         }
     }
+    $('#action-output').html(actionMessage);
 }
 
 function dropItem() {
-    
     if (commandVerb[0] == "drop" || commandVerb[0] == "discard") {
         for (var i = 0; i < inventory.length; i++) {
             if (commandPostVerb == inventory[i]) {
@@ -393,7 +483,23 @@ function negativeFeedback() {
 }
 
 function showNarrative() {
+    $('#move-output').html(moveMessage);
     $('#room-output').html("You are currently standing in the " + room[currentRoom].roomName);
     $('#message-output').html(room[currentRoom].roomDescription);
     $('#action-output').html(actionMessage);
+    $('#data-output').html(dataMessage);
+
+    showItem();
+    checkVisibleItems();
+}
+
+function clearOutputs() {
+    moveMessage = "";
+    $('#move-output').html(moveMessage);
+    actionMessage = "";
+    $('#action-output').html(actionMessage);
+    additionalMessage = "";
+    $('#additional-output').html(additionalMessage);
+    dataMessage = "";
+    $('#data-output').html(dataMessage);
 }

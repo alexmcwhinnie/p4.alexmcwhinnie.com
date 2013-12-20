@@ -2,14 +2,9 @@
 
 <form method='POST' action='/users/p_signup'>
 
-    First Name
+    Username
     <br>
-    <input type='text' name='first_name' required>
-    <br><br>
-
-    Last Name
-    <br>
-    <input type='text' name='last_name' required>
+    <input type='text' name='username' required>
     <br><br>
 
     Email
@@ -22,6 +17,6 @@
     <input type='password' name='password' required>
     <br><br>
 
-    <input type='submit' value='Sign me up!'>
+    <input type='submit' value='Sign me up, good sir!'>
 
 </form>
