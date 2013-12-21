@@ -9,14 +9,16 @@ class game_controller extends base_controller {
 
         $currentRoom = $_POST['currentRoom'];
         $inventory = $_POST['inventory'];
-        $lockBathroom = $_POST['lockBathroom'];
+        $visible_items = $_POST['visible_items'];
+        $door_locks= $_POST['door_locks'];
 
         # Prepare the data array to be inserted
         $data = Array(
             "user_id" => $this->user->user_id,
             "room_number" => $currentRoom,
             "inventory" => $inventory,
-            "lock_bathroom" => $lockBathroom,
+            "visible_items" => $visible_items,
+            "door_locks" => $door_locks,
         );
 
         // # Note we didn't have to sanitize any of the $_POST data because we're using the insert method which does it for us

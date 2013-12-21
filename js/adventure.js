@@ -29,7 +29,13 @@ var actionMessage;
 var feedbackMessage;
 var additionalMessage;
 var dataMessage;
+var loadData;
 var currentRoom = 1;
+
+var lockString;
+var allLockString = "";
+var visibleItemsString;
+var allVisibleItemsString = "";
 
 // b) Arrays
 var room = new Array();
@@ -135,15 +141,72 @@ room[4] = room4;
 /*-----------------------
 5. Functions
 -----------------------*/
+function encodeVisibleItems() {
+
+    for (var i = 1; i < room.length; i++) {
+        // Loop through the rooms and make visible items a string
+        visibleItemsString = room[i].visibleItems.toString()
+        // Add a marker at the end to assist with extraction
+        visibleItemsString = visibleItemsString.concat("!");
+        // Concatinate them all together for injecting into the DB
+        allVisibleItemsString = allVisibleItemsString.concat(visibleItemsString);
+    }
+}
+
+function decodeVisibleItems() {
+
+    var decodedItems = loadData[0].visible_items.split("!");
+
+     for (var i = 1; i < room.length; i++) {
+        var j = (i - 1);
+        room[i].visibleItems = decodedItems[j].split(',');    
+     }
+}
+
+
+
+
+function encodeLocks() {
+
+    for (var i = 1; i < room.length; i++) {
+        // Loop through the rooms and make visible items a string
+        lockString = room[i].doorLocked.toString()
+        // Add a marker at the end to assist with extraction
+        lockString = lockString.concat("!");
+        // Concatinate them all together for injecting into the DB
+        allLockString = allLockString.concat(lockString);
+    }
+    console.log(allLockString);
+}
+
+function decodeLocks() {
+
+    var decodedLocks = loadData[0].door_locks.split("!");
+
+     for (var i = 1; i < room.length; i++) {
+        var j = (i - 1);
+        room[i].doorLocked = decodedLocks[j].split(',');    
+        console.log("Room " + i + " locks: " + room[i].doorLocked);
+     }
+}
+
+
+
+
 function saveSession() {
 
     // Convert inventory array to string in prep for sending to DB
     var inventoryString = inventory.toString();
 
+    // Get all visible items from room objects
+    encodeVisibleItems();
+    // Get status of all door locks from room objects
+    encodeLocks();
+
     $.ajax({
         type: "POST",
         url: "game/p_save",
-        data: {currentRoom: currentRoom, inventory: inventoryString, lockBathroom: room[2].doorLocked[1]},
+        data: {currentRoom: currentRoom, inventory: inventoryString, visible_items: allVisibleItemsString, door_locks: allLockString},
         complete: function(data){
                 //data contains the response from the php file.
                 //u can pass it here to the javascript function
@@ -152,23 +215,23 @@ function saveSession() {
 }
 
 function processLoad(data) { 
-    var loadData = jQuery.parseJSON( data.responseText );
+    loadData = jQuery.parseJSON( data.responseText );
 
-    // print old room
-    console.log("old: " + currentRoom);
     // Get Current Room
     currentRoom = loadData[0].room_number;
-    // print new room
-    console.log("new: " + currentRoom);
-    // print session id that is being sent from sql/php
-    console.log("game session id: " + loadData[0].game_session_id);
     
     // Get Inventory
     var inventoryString = loadData[0].inventory;
     
     // Update inventory
     inventory = inventoryString.split(',');
-    room[2].doorLocked[1] = loadData[0].lock_bathroom;
+    // room[2].doorLocked[1] = loadData[0].lock_bathroom;
+
+    // Complex function to decode visible item string from DB
+    decodeVisibleItems();
+    // Complex function to decode lock string from DB
+    decodeLocks();
+
     showNarrative();
 }
 
@@ -201,7 +264,6 @@ function newSession() {
                 //u can pass it here to the javascript function
         }
     });
-    //showNarrative();
 }
 
 function commandHandling() {
