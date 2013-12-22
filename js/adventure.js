@@ -32,6 +32,7 @@ var additionalMessage;
 var dataMessage;
 var loadData;
 var currentRoom = 1;
+var inventorySize = 4;
 
 var lockString;
 var allLockString = "";
@@ -367,7 +368,7 @@ function showItem() {
 }
 
 function checkInventorySize() {
-    if (inventory.length >= 4) {
+    if (inventory.length >= inventorySize) {
         inventoryFull = true;
     } else {
         inventoryFull = false;
