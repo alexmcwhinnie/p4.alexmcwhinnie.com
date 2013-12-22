@@ -14,7 +14,7 @@ If you want a different default time format for this app, set it below
 */
 
 # What is the name of this app?
-	define('APP_NAME', 'The Manor');  
+	define('APP_NAME', "Lord Uxbridge's Manor");  
 
 # When email is sent out from the server, where should it come from?
 # Ideally, this should match the domain name
