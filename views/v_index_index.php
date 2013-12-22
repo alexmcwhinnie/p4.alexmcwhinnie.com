@@ -46,18 +46,18 @@
     <!-- If user isnt logged in, show signup/login panel -->
 	<div id='leftColumn'>
 		<h3>New?<br>Sign up!</h3>
-		<form method='POST' action='/users/p_signup'>
+		<form method='POST' action='/users/p_signup' id='signupForm'>
 
 		    Username<br>
-		    <input type='text' name='username' required>
+		    <input type='text' name='username' id='username' required>
 		    <br><br>
 
 		    Email<br>
-		    <input type='text' name='email' required>
+		    <input type='text' name='email' id='email' required>
 		    <br><br>
 
 		    Password<br>
-		    <input type='password' name='password' required>
+		    <input type='password' name='password' id='password' required>
 		    <br><br>
 
 		    <input type='submit' value='Sign me up!'>
