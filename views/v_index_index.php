@@ -39,7 +39,7 @@
 
 <!-- USERS NOT LOGGED IN GET TEASER TEXT -->
 <?php else: ?>
-   <p>Hello, and welcome. You have been invited to spend a few days in…relative…comfort. I hope you enjoy your time with us, and please, do tell your friends. We would absolutely die to have more company… </p>
+   <p>Hello, you have been invited to spend a few days in…relative…comfort. I hope you enjoy your time with us, and please, do tell your friends. We would absolutely die to have more company… </p>
 <?php endif; ?>
 
 <?php if(!$user): ?>
