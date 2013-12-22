@@ -39,7 +39,7 @@
 
 <!-- USERS NOT LOGGED IN GET TEASER TEXT -->
 <?php else: ?>
-   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt nulla quis commodo tempus. Phasellus placerat consectetur enim in placerat. Sed ac nisl at libero accumsan rhoncus. Integer sagittis justo risus. Nunc imperdiet fermentum blandit. Sed eros nulla, tempor vitae tortor et, dictum euismod enim. Mauris ac tincidunt leo. Duis at arcu quis lacus dignissim facilisis at a nibh. Nunc quis neque libero. Donec convallis commodo turpis, vulputate porttitor elit viverra id. Duis suscipit ante ac volutpat consequat. </p>
+   <p>Hello, and welcome to my manor. You have been invited to spend a few days in…relative…comfort. I hope you enjoy your time with us, and please, do tell your friends. We would absolutely die to have more company… </p>
 <?php endif; ?>
 
 <?php if(!$user): ?>
