@@ -2,37 +2,39 @@
 
 <!-- USERS LOGGED IN GET THE GAME -->
 <?php if($user): ?>
-	<p id = 'data-output'></p>
+	<div id='gameLeftColumn'>
+		<p id = 'data-output'></p>
+		<p id = 'move-output'></p>
+		<p id = 'room-output'></p>
+		<p id = 'message-output'></p>
+		<p id = 'action-output'></p>
+		<p id = 'additional-output'></p>
+		<p id = 'negativeFeedback-output'></p>
 
-	<p id = 'move-output'></p>
+		<strong>Your see the following exits</strong>
+		<p id = 'exits-output'></p>
 
-	<p id = 'room-output'></p>
+		<strong>The see the following items</strong>
+		<p id = 'visibleItems-output'></p>
 
-	<p id = 'message-output'></p>
+		<strong>Your pack contains the following</strong>
+		<p id = 'inventory-output'></p>
 
-	<p id = 'action-output'></p>
+		<p>What would you like to do?</p>
+		<p id = 'tip'>You are free to MOVE, TAKE items, DROP items and USE items</p>
 
-	<p id = 'additional-output'></p>
-	
-	<p id = 'negativeFeedback-output'></p>
-	
-	<strong>Your see the following exits</strong>
-	<p id = 'exits-output'></p>
-
-	<strong>The see the following items</strong>
-	<p id = 'visibleItems-output'></p>
-
-	<strong>Your pack contains the following</strong>
-	<p id = 'inventory-output'></p>
-
-	<p>What would you like to do?</p>
-	<p id = 'tip'>You are free to MOVE, TAKE items, DROP items and USE items</p>
-
-	<form id = 'commandForm'>
-		<input type='text' id='command'>
-		<input type='submit' value='Do it' id='doit'>
-	</form>
-
+		<form id = 'commandForm'>
+			<input type='text' id='command'>
+			<input type='submit' value='Do it' id='doit'>
+		</form>
+	</div>
+	<!--
+	<div id='gameRightColumn'>
+		<div id='map'>
+			<div id='marker'></div>
+		</div>
+	</div>
+	-->
 	<script src="js/adventure.js"></script>
 
 <!-- USERS NOT LOGGED IN GET TEASER TEXT -->

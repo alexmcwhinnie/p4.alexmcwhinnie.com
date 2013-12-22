@@ -4,6 +4,7 @@ INDEX
     a) Variables
     b) Arrays
     c) Booleans
+    d) Set starting items
 
 2.  Onload Listener
 
@@ -53,15 +54,25 @@ var roomLocked = new Array();
 // c) Booleans
 var inventoryFull = false;
 
-
+// d) Set starting items
 inventory[0] = "watch";
 inventory[1] = "potato";
+
+// e) Strings
+var descriptionVeranda = 'As you stand on the veranda you wonder how you let yourself get talked into this. You rub your fingers over the embossed card once more “Congratulations! You have won a weekend of relaxation and MAGIC!” Magic? Lame. But work has been a drag and your friends convinced you. I mean, who can afford a weekend in a chateau anyway? Casually you check the time, the weekend has officially begun! Neat, the entrance to this chateau is exactly due north. You make a mental note to thank your mum for the snazzy watch with an inbuilt compass. WHO IS LAUGHING NOW PHILLIP??!!';
+var descriptionHallway = 'In the hallway you see a small table with a note that reads "Welcome! Please help yourself to a refreshing beverage while you explore your new home for the next few days. The keys to the chateau have been laid out for you. May everything go as planned." Huh, that was ominous. You ponder the meanings of that as you sip your water and familiarize yourself with your surroundings. There is a doorway to the east and another to the west.';
+var descriptionLibrary = 'You enter the library and immediately notice an inordinate amount of paintings on the walls, mostly of well dressed posh dudes. Why do these old paintings always feel like they are watching you? You keep poking around and see a well worn chesterfield position in front of a fireplace. You decide that will be your place of napping this weekend. There is also a fireplace poker lying across the mantle and a bell, book, and candle on the table.';
+var descriptionDining = 'You are in the dining room. There are exits to the North, South, and East. The table has been set up with a service for 12. You notice the dishes are rather dusty. Very weird. As you go to touch one, it feels as though your hand is falling through the table. Maybe you should get out of this room, it is giving you the creeps. You see a fancy Zippo lighter on the sideboard';
+var descriptionKitchen = 'You enter the kitchen and see bowls of fruit and snacks all over the place. You grab an apple and start to eat it as you inspect the other parts of the kitchen. There is a really weird feature where the walls seem to be melting. What the fuck? You decide maybe you don’t want to stay here anymore. Hastily you take note of doors to the north and south. There is a kettle on the stove, as well as some kerosene lanterns hanging on the wall.';
+var descriptionBathroom = 'You head north into the bathroom. It is a small room with just a toilet and a sink with a single exit to the south. You take a moment to splash some water on your face and compose yourself. Suddenly a nice gentleman looking at you through the mirror reminds you that the towels are on the rack behind you. Since when did reflections talk back? ';
+var descriptionParlor = 'You enter the parlor and there is but a single Queen Ann chair sitting on top of a tiny sheepskin rug. You can see out the window. Your car is visible in the driveway. As you walk around the room,  your footsteps sound like jackhammers on the hardwood floors. Maybe this is not as cool a room as you thought. You also notice there is only a single exit, back the way you came.';
 
 
 /*-----------------------
 2. Onload functions
 -----------------------*/
 $( document ).ready(function() {
+    //map();
     checkVisibleItems();
     showItem();
     showNarrative();
@@ -86,6 +97,7 @@ $( "#commandForm" ).submit(function(event) {
     dropItem();
     checkVisibleItems();
     showItem();
+    //map();
     event.preventDefault();
 });
 
@@ -127,14 +139,20 @@ function Room (_roomNumber, _roomName, _roomDescription, _roomExits, _visibleIte
 
 
 // b) Instantiate Objects (note: roomExits array [0]North, [1]East, [2]South, [3]West)
-var room1 = new Room(1, "foyer", "This is a desctiption of the foyer", _roomExits = [2, 0, 0, 0], _visibleItems = ["key", "potato", "rock"], _doorLocked = [false, false, false, false]);
+var room1 = new Room(1, "Veranda", descriptionVeranda, _roomExits = [2, 0, 0, 0], _visibleItems = ["doormat", "firewood"], _doorLocked = [false, false, false, false]);
 room[1] = room1;
-var room2 = new Room(2, "parlor", "This is a description of the parlor room", _roomExits = [0, 4, 1, 3], _visibleItems = ["lamp", "rug", "chair"], _doorLocked = [false, true, false, false]);
+var room2 = new Room(2, "Hallway", descriptionHallway, _roomExits = [0, 3, 1, 4], _visibleItems = ["keys", "empty glass"], _doorLocked = [false, true, true, false]);
 room[2] = room2;
-var room3 = new Room(3, "phone room", "To your left you see an old phone and a calendar from 1957", _roomExits = [0, 2, 0, 0], _visibleItems = ["phone", "stool", "phone book"], _doorLocked = [false, false, false, false]);
+var room3 = new Room(3, "Library", descriptionLibrary, _roomExits = [0, 0, 0, 2], _visibleItems = ["poker", "bell", "book", "candle"], _doorLocked = [false, false, false, false]);
 room[3] = room3;
-var room4 = new Room(4, "bathroom", "This is a bathroom", _roomExits = [0, 0, 0, 2], _visibleItems = ["toilet paper"], _doorLocked = [false, false, false, false]);
+var room4 = new Room(4, "Dining Room", descriptionDining, _roomExits = [5, 2, 7, 0], _visibleItems = ["lighter", "gravy boat", "centerpiece"], _doorLocked = [false, false, true, false]);
 room[4] = room4;
+var room5 = new Room(5, "Kitchen", descriptionKitchen, _roomExits = [6, 0, 4, 0], _visibleItems = ["kettle", "lantern", "potato"], _doorLocked = [false, false, false, false]);
+room[5] = room5;
+var room6 = new Room(6, "Bathroom", descriptionBathroom, _roomExits = [0, 0, 5, 0], _visibleItems = ["towel", "soap", "hairbrush"], _doorLocked = [false, false, false, false]);
+room[6] = room6;
+var room7 = new Room(7, "Parlor", descriptionParlor, _roomExits = [4, 0, 0, 0], _visibleItems = ["rug", "curtains"], _doorLocked = [false, false, false, false]);
+room[7] = room7;
 
 
 
@@ -162,9 +180,6 @@ function decodeVisibleItems() {
         room[i].visibleItems = decodedItems[j].split(',');    
      }
 }
-
-
-
 
 function encodeLocks() {
 
@@ -352,7 +367,7 @@ function showItem() {
 }
 
 function checkInventorySize() {
-    if (inventory.length >= 3) {
+    if (inventory.length >= 4) {
         inventoryFull = true;
     } else {
         inventoryFull = false;
@@ -401,23 +416,27 @@ function useItem() {
 
 
                 // HUGE AMOUNT OF IF STATEMENTS!
-                console.log("You have used the " + inventory[i]);
-
-                // Use Bathroom Key
-                if (inventory[i] == "key" && currentRoom == 2) {
-                    console.log("current room 2 and key used");
-
+                // Use library Key
+                if (inventory[i] == "keys" && currentRoom == 2) {
                     // Update Object
                     room[currentRoom].doorLocked[1] = false;
-
-                    // Boolean for DB
-                    lockBathroom = false;
 
                     // Set action message
                     actionMessage = "You use the " + inventory[i];
 
                     // Set additional message
-                    additionalMessage = "The door swings open and you peer into what looks like a bathroom";
+                    additionalMessage = "The door swings open and the smell of leather bound books and rich mahogany hits you in the face.";
+                    $('#additional-output').html(additionalMessage);
+                }
+                if (inventory[i] == "keys" && currentRoom == 4) {
+                    // Update Object
+                    room[currentRoom].doorLocked[2] = false;
+
+                    // Set action message
+                    actionMessage = "You use the " + inventory[i];
+
+                    // Set additional message
+                    additionalMessage = "You use one of the many keys and finally open the door. You are standing on the threshold of what appears to be the parlor.";
                     $('#additional-output').html(additionalMessage);
                 }
             }
@@ -543,6 +562,29 @@ function negativeFeedback() {
     // Output feedback message
     $('#negativeFeedback-output').html(feedbackMessage);
 }
+
+
+// Map. For future development. Code works fine.
+// function map () {
+//     // Veranda
+//     if (currentRoom == 1) {
+//         $('#marker').css('left', '0px');
+//         // Grab the name of the room and display it above push pin
+//         $('#marker').html(room[1].roomName);
+//     // hall
+//     } else if (currentRoom == 2) {
+//         $('#marker').css('left', '35px');
+//         // Grab the name of the room and display it above push pin
+//         $('#marker').html(room[2].roomName);
+//     // parlor
+//     } else if (currentRoom == 3) {
+//         $('#marker').css('left', '100px');
+//         // Grab the name of the room and display it above push pin
+//         $('#marker').html(room[3].roomName);
+//     }
+// }
+
+
 
 function showNarrative() {
     $('#move-output').html(moveMessage);

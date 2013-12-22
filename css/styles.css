@@ -12,16 +12,27 @@ body {
 
 header {
 	margin-bottom: 20px;
+	float: left;
+	width: 340px;
 }
 
 #wrapper {
 	margin: auto;
 	margin-bottom: 10px;
 	padding: 20px;
-	width: 800px;
+	width: 980px;
 	background-color: #F0EDED;
 	border-radius: 10px;
 }
+
+#content {
+}
+
+#gameLeftColumn {
+	float: left;
+	width: 630px;
+}
+
 
 #leftColumn {
 	padding-top: 10px;
@@ -32,7 +43,8 @@ header {
 
 #rightColumn {
 	padding-top: 10px;
-	margin-left: 180px;
+	float: left;
+	margin: 0px 0px 0px 30px;
 	width: 150px;
 	border-radius: 10px;
 }
@@ -49,13 +61,37 @@ header {
 	color: #ff0000;
 }
 
+#map {
+	position: relative;
+	background-color: #999999;
+	background-image: url('../images/map.png');
+	width: 200px;
+	height: 200px;
+}
+
+#marker {
+	position: absolute;
+	top: 100px;
+	left: 100px;
+	background-image: url('../images/marker.png');
+	background-position: bottom;
+	background-repeat: no-repeat;
+	width: 70px;
+	height: 60px;
+
+	font-size: 0.8em;
+	font-weight: bold;
+	color: #BE1E2D;
+	text-align: center;
+}
+
 input {
 	width: 150px;
 }
 
 h1 {
-	width: 300px;
-	height: 249px;
+	width: 320px;
+	height: 316px;
 	text-indent: 100%;
 	white-space: nowrap;
 	overflow: hidden;
@@ -64,7 +100,7 @@ h1 {
 }
 
 h2 {
-	margin: 20px 0px 10px 0px;
+	margin: 0px 0px 10px 0px;
 	color: #333333;
 }
 
@@ -129,6 +165,6 @@ a:hover {
 
 footer {
 	text-align: center;
-	margin: 10px 0px 0px 0px;
+	margin: 20px 0px 0px 0px;
 	font-size: 0.8em;
 }

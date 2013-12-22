@@ -24,9 +24,9 @@
                     <!-- Menu for users who are logged in -->
                     <?php if($user): ?>
                         <li><a href='/users/profile'>Account</a></li>
-                        <li><a href='#' id='save'>Save Game</a></li>
-                        <li><a href='#' id='load'>Load Game</a></li>
-                        <li><a href='#' id='new'>New Game</a></li>
+                        <li><a href='#' id='save'>Save</a></li>
+                        <li><a href='#' id='load'>Load</a></li>
+                        <li><a href='#' id='new'>New</a></li>
                         <li><a href='/users/logout'>Logout</a></li>
 
                     <!-- Menu options for users who are not logged in -->
@@ -43,7 +43,9 @@
         <div id = "content">
             <!-- Load in content -->
             <?php if(isset($content)) echo $content; ?>
+        
         </div>
+        <hr>
         <footer>
             <!-- Insert App name and current year -->
             <p>Copyright <?=APP_NAME?> <?php echo date('Y')?></p>
